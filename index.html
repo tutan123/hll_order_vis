@@ -48,8 +48,6 @@
                 </el-form-item>
             </el-form>
             <div style="position: absolute; top: 12.5px; right: 320px;">
-                <!-- <el-input v-model="input_bd_name" placeholder="请输入“BD围栏ID”或“商圈边框的准确名称”" size="small" clearable
-                    style="width: 300px;"></el-input> -->
                 <el-autocomplete v-model="input_bd_name" :fetch-suggestions="querySearch" :max-results="5"
                     placeholder="请输入“BD围栏ID”或“商圈边框名称”" size="small" style="width: 300px;" :trigger-on-focus="true"
                     @select="locatePosition()"></el-autocomplete>
