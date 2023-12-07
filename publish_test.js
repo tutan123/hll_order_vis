@@ -7,7 +7,7 @@ const path = require('path');
 const server = http.createServer((req, res) => {
     if (req.url === '/') {
         // 读取并响应 system.html 文件
-        fs.readFile(path.join(__dirname, 'index copy.html'), (err, data) => {
+        fs.readFile(path.join(__dirname, 'index.html'), (err, data) => {
             if (err) {
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end('Internal Server Error');
