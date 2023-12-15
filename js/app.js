@@ -1,7 +1,3 @@
-// import { JsonProvider } from 'leaflet-geosearch';
-// console.log(JsonProvider)
-// vue
-
 import map_methods from "./map_methods.js";
 import upload_file from "./upload_file.js";
 import locate_position from "./locate_position.js";
@@ -34,7 +30,8 @@ new Vue({
         currentCoordinateIndex: 0,
         buttonDisabled: true,
         input_history: undefined,
-        all_suggestions: []
+        all_suggestions: [],
+        gridLayers: []
     },
     watch: {
         tableData(newValue, oldValue) {

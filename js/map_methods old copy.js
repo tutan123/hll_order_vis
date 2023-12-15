@@ -48,6 +48,7 @@ export default {
 
         // this数据赋值
         var map = this.map;
+    
         const search = new GeoSearch.SearchControl({
             provider: new GeoSearch.OpenStreetMapProvider(),
             // provider: new MyProvider(),
@@ -208,173 +209,6 @@ export default {
             .domain(ranges) // 数据范围
             .range(colors); // 颜色范围
 
-        var labelLayer = [];
-        const clusterLayer = [];
-
-        console.log("正在渲染商圈网格...");
-
-        const renderGridInView = () => {
-            const bounds = map.getBounds();
-
-            this.gridLayers.forEach(layer => map.removeLayer(layer));
-            this.gridLayers = [];
-            labelLayer.forEach(layer => map.removeLayer(layer));
-            labelLayer = [];
-
-            const gridsInView = tableData.filter(d => {
-                const center = coordtransform.wgs84togcj02(h3.h3ToGeo(d.h3id)[1], h3.h3ToGeo(d.h3id)[0]);
-                // console.log(center);
-                return bounds.contains(L.latLng(center[1], center[0]));
-            })
-
-            // console.log(gridsInView);
-
-            gridsInView.forEach(d => {
-                const boundary = h3.h3ToGeoBoundary(d.h3id); // h3id 转化为网格
-
-                // 使用 coordtransform 将 WGS 84（世界通用） 转换为高德坐标（中国）
-                const gcj02Coordinates = boundary.map(coord => {
-                    const result = coordtransform.wgs84togcj02(coord[1], coord[0]);
-                    return [result[1], result[0]]; // 反转经纬度顺序
-                });
-
-                // console.log("gcj02Coordinates", gcj02Coordinates)
-
-                const h3id = d.h3id;
-                const count = +d.count;
-
-                // const cluster_flag = +d.cluster_flag
-                // console.log("cluster_flag", cluster_flag)
-                var layer = L.polygon(gcj02Coordinates, {
-                    color: "#ffffff",
-                    fillColor: colorScale(count),
-                    weight: strokeWidth,
-                    opacity: opacity,
-                    fillOpacity: fillOpacity
-                }).addTo(map);
-
-                // if (cluster_flag == 1) {
-                //     clusterLayer.push(layer)
-                // }
-                // 添加tooltip
-                const tooltip = "<div style='color:black;'> h3id: " + h3id + " : " + count + "</div>";
-                layer.bindTooltip(tooltip);
-
-                // 添加鼠标悬停事件以关闭tooltip
-                layer.on('mouseover', function () {
-                    this.openTooltip();
-                });
-
-                layer.on('mouseout', function () {
-                    this.closeTooltip();
-                });
-
-                layer.on('click', function () {
-                    _this.copy(h3id);
-                });
-
-                // marker的icon文字
-                const myIcon = L.divIcon({
-                    html: "<div style='color:black;'>" + count + "</div>",
-                    className: 'text-icon',
-                    iconSize: 10
-                });
-
-                //中心点位
-                const textLabel = L.marker(layer.getBounds().getCenter(), { icon: myIcon });
-                labelLayer.push(textLabel);
-
-                this.gridLayers.push(layer);
-
-            });
-        }
-
-        renderGridInView();
-
-        this.combinedUploadNotice();
-        console.log("商圈网格渲染完毕");
-
-        // 将聚类网格图层置顶，避免被相邻非聚类网格的stroke覆盖
-        clusterLayer.forEach(layer => {
-            layer.bringToFront();
-        });
-
-        // 监听地图的缩放事件
-        // map.on('zoomend', () => {
-        //     var currentZoom = map.getZoom(); // 获取当前缩放级别
-        //     var minZoom = this.minZoom
-        //     // 根据缩放级别决定哪些文本标签显示或隐藏
-        //     // this.$nextTick(() => {
-        //     //     if (currentZoom >= minZoom) {
-        //     //         if (!map.hasLayer(labelLayer))
-        //     //             map.addLayer(labelLayer)
-        //     //     } else {
-        //     //         if (map.hasLayer(labelLayer))
-        //     //             map.removeLayer(labelLayer)
-        //     //     }
-        //     // })
-
-
-        // });
-
-        // 添加拖拽事件监听器
-        map.on('moveend', function () {
-            renderGridInView();
-            updateGridsInViewport();
-        }); 
-
-        // 添加缩放事件监听器
-        map.on('zoomend', function () {
-            var currentZoom = map.getZoom();
-            _this.currentZoom = currentZoom;
-            renderGridInView();
-            updateGridsInViewport();
-        });
-
-        // 更新视窗内的网格文字（订单数量）
-        function updateGridsInViewport() {
-            // console.log(labelLayer);
-            const numMinZoom = _this.numMinZoom;
-            const currentZoom = _this.currentZoom;
-            if (currentZoom >= numMinZoom) {
-                labelLayer.forEach(textLabel => {
-                    if (map.getBounds().contains(textLabel.getLatLng())) {
-                        textLabel.addTo(map);
-                    }
-                });
-            } else {
-                labelLayer.forEach(textLabel => {
-                    if (map.hasLayer(textLabel)) {
-                        textLabel.remove();
-                    }
-                });
-            }
-        }
-    },
-    drawGrid_old() {           // 3 商圈网络-button: 画h3 网格
-        /** 全局数据赋值 **/
-        const tableData = this.fence_grid_data;
-        const map = this.map;
-        const _this = this;
-
-        /** 样式配置 **/
-        const fillOpacity = 0.5;              // 网格不透明度
-        const strokeWidth = 1;                // Stroke的线宽
-        const clusterStrokeColor = "#c92a2a"; // 聚类网格Stroke颜色
-        const opacity = 0.8;                  // Stroke透明度
-
-        this.input_history = undefined;
-
-        // const colorScale = d3.scaleLinear()
-        //     .domain(d3.extent(tableData, d => d.normCount)) // 数据范围
-        //     .range(["gray", "red"]); // 颜色范围
-        const colors = ["#adb5bd", "#ffe3e3", "#ffc9c9", "#ff8787", "#fa5252", "#c92a2a"];
-        const ranges = [5, 8, 10, 15, 20];
-
-        const colorScale = d3.scaleThreshold()
-            .domain(ranges) // 数据范围
-            .range(colors); // 颜色范围
-
         const labelLayer = [];
         const clusterLayer = [];
 
@@ -471,6 +305,7 @@ export default {
         map.on('zoomend', function () {
             var currentZoom = map.getZoom();
             _this.currentZoom = currentZoom;
+
             updateGridsInViewport();
         });
 
