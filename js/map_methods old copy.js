@@ -245,6 +245,7 @@ export default {
             const tooltip = "<div style='color:black;'> h3id: " + h3id + " : " + count + "</div>";
             layer.bindTooltip(tooltip);
 
+
             // 添加鼠标悬停事件以关闭tooltip
             layer.on('mouseover', function () {
                 this.openTooltip();

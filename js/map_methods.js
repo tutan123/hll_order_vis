@@ -117,7 +117,7 @@ export default {
         // });
     },
     async drawCluster() {  // 2 商圈边框-button: 聚类商圈红色边框
-        const map = this.map;
+        const map = this.map;         
         const strokeWidth = 4;                  // Stroke的线宽
         const clusterStrokeColor = "#c92a2a";   // 聚类网格Stroke颜色
         const opacity = 0.8;                    // Stroke透明度
@@ -151,7 +151,7 @@ export default {
                 fill: false
             }).addTo(map);
 
-            // const content = "<div>" + fence_name + "</div>";
+            const content = "<div>" + fence_name + "</div>";
 
             // if (cnt % 200 === 0) {
             //     console.log("商圈名称:", fence_name, cnt); // 打印围栏名称到控制台
@@ -167,12 +167,12 @@ export default {
             this.all_suggestions.push({ value: fence_name });
 
             // marker的icon文字
-            // const myIcon = L.divIcon({
-            //     html: "<div style='color:red; font-size: 8px;'>" + content + "</div>",
-            //     className: 'my-div-icon',
-            //     iconSize: 50
-            // });
-            // var textLabel = L.marker(layer.getBounds().getCenter(), { icon: myIcon }).addTo(map);
+            const myIcon = L.divIcon({
+                html: "<div style='color:red; font-size: 8px;'>" + content + "</div>",
+                className: 'my-div-icon',
+                iconSize: 50
+            });
+            var textLabel = L.marker(layer.getBounds().getCenter(), { icon: myIcon }).addTo(map);
             // var textLabel = L.marker(layer.getBounds().getCenter(), { icon: myIcon });
 
             // 交付时需要注释掉
