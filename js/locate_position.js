@@ -33,6 +33,8 @@ export default {
             // 是数字 -> BD围栏ID
             const coordinates = this.bdFenceIdToCoordinates[inputName];
 
+            console.log(coordinates);
+
             if (coordinates) {
                 isFound = true;
 

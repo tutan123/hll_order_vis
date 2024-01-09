@@ -47,6 +47,16 @@
                     </el-upload>
                 </el-form-item>
             </el-form>
+
+            <div class="change_center" style="position: absolute; top: 12.5px; right: 820px;">
+                <el-input-number size="small" :controls="false" style="width: 80px;" placeholder="经度" v-model="input_lng">
+                </el-input-number>
+                <el-input-number size="small" :controls="false" style="width: 80px;" placeholder="纬度" v-model="input_lat">
+                </el-input-number>
+                <el-button size="small" icon="el-icon-add-location" type="primary" @click="addMarker()"
+                    clearable>添加点（经度，纬度）</el-button>
+            </div>
+
             <div style="position: absolute; top: 12.5px; right: 320px;">
                 <el-autocomplete v-model="input_bd_name" :fetch-suggestions="querySearch" :max-results="5"
                     placeholder="请输入“BD围栏ID”或“商圈边框名称”" size="small" style="width: 300px;" :trigger-on-focus="true"
@@ -54,6 +64,7 @@
                 <el-button size="small" icon="el-icon-search" type="primary" @click="locatePosition()"
                     clearable>搜索</el-button>
             </div>
+
             <div style="position: absolute; top: 16px; right: 160px;">已找到重复名称商圈:</div>
             <div id="coordinateInfo" style="position: absolute; top: 20px; right: 110px;">0 of 0</div>
             <el-button-group style="position: absolute; top: 12.5px; right: 10px;">

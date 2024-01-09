@@ -2,12 +2,14 @@ import map_methods from "./map_methods.js";
 import upload_file from "./upload_file.js";
 import locate_position from "./locate_position.js";
 import utilites from "./utilites.js";
+import add_marker from "./add_marker.js";
 
 const methods = {
     ...map_methods,
     ...upload_file,
     ...locate_position,
-    ...utilites
+    ...utilites,
+    ...add_marker
 }
 
 Vue.config.productionTip = false
@@ -31,7 +33,10 @@ new Vue({
         buttonDisabled: true,
         input_history: undefined,
         all_suggestions: [],
-        gridLayers: []
+        gridLayers: [],
+        input_lng: 31.23,                   // 经度
+        input_lat: 121.47,                   // 纬度
+        markers: [],
     },
     watch: {
         tableData(newValue, oldValue) {
